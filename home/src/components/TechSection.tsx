@@ -143,10 +143,10 @@ const TechSection = () => {
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Command Center Dashboard
+            System Architecture
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Real-time operational metrics from our global surveillance network.
+            Technical stack powering the detection and classification pipeline.
           </p>
         </motion.div>
         
@@ -154,31 +154,29 @@ const TechSection = () => {
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
           <TelemetryCard
             icon={Server}
-            label="System Uptime"
-            value="99.97"
-            unit="%"
+            label="Backend"
+            value="FastAPI"
             status="online"
             delay={0.1}
           />
           <TelemetryCard
             icon={Activity}
-            label="Active Feeds"
-            value="2,847"
+            label="Detection Model"
+            value="YOLOv8"
             status="active"
             delay={0.2}
           />
           <TelemetryCard
             icon={Globe}
-            label="Nodes Online"
-            value="128"
+            label="Classifier"
+            value="ViT-B/16"
             status="online"
             delay={0.3}
           />
           <TelemetryCard
             icon={Database}
-            label="Data Processed"
-            value="4.7"
-            unit="PB"
+            label="Database"
+            value="MongoDB"
             status="active"
             delay={0.4}
           />
@@ -187,16 +185,15 @@ const TechSection = () => {
           
           <TelemetryCard
             icon={Wifi}
-            label="Latency"
-            value="12"
-            unit="ms"
+            label="Frontend"
+            value="React"
             status="online"
             delay={0.5}
           />
           <TelemetryCard
             icon={Shield}
-            label="Threats Blocked"
-            value="47.2K"
+            label="Auth"
+            value="Clerk"
             status="secure"
             delay={0.6}
           />

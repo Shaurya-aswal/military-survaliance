@@ -34,9 +34,9 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <span className="text-foreground">Global Situational Awareness.</span>
+            <span className="text-foreground">Detect. Classify.</span>
             <br />
-            <span className="text-primary">Real-Time Intelligence.</span>
+            <span className="text-primary">Neutralize Threats.</span>
           </motion.h1>
           
           {/* Subheadline */}
@@ -46,8 +46,8 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Advanced surveillance solutions for defense and intelligence agencies. 
-            Delivering actionable insights with military-grade precision.
+            AI-powered military object detection using YOLOv8 and Vision Transformer.
+            Real-time image analysis with geolocated threat mapping.
           </motion.p>
           
           {/* CTA Buttons */}
@@ -75,9 +75,9 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
           >
             {[
-              { label: "Active Operations", value: "47+" },
-              { label: "Countries Deployed", value: "32" },
-              { label: "Uptime", value: "99.97%" },
+              { label: "Detection Pipeline", value: "YOLO + ViT" },
+              { label: "Object Classes", value: "10" },
+              { label: "Stack", value: "FastAPI + React" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold font-mono text-primary">

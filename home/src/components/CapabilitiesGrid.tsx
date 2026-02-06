@@ -4,34 +4,34 @@ import { Plane, Satellite, Radio, Brain, Shield, Crosshair } from "lucide-react"
 const capabilities = [
   {
     icon: Plane,
-    title: "Aerial Reconnaissance",
-    subtitle: "UAV & Drone Systems",
-    description: "Multi-spectrum drone feeds with real-time data transmission. Autonomous flight patterns for extended surveillance operations.",
-    stats: { label: "Range", value: "500km" },
+    title: "YOLOv8 Object Detection",
+    subtitle: "Real-Time Detection",
+    description: "Ultralytics YOLOv8 model detects military objects — soldiers, tanks, aircraft, drones — with bounding boxes, confidence scores, and class labels in milliseconds.",
+    stats: { label: "Model", value: "YOLOv8" },
     accent: "primary",
   },
   {
     icon: Satellite,
-    title: "Satellite Imagery",
-    subtitle: "Orbital Analysis",
-    description: "Sub-meter resolution imaging with rapid revisit rates. Synthetic aperture radar for all-weather intelligence gathering.",
-    stats: { label: "Resolution", value: "0.3m" },
+    title: "Vision Transformer (ViT)",
+    subtitle: "Fine-Grained Classification",
+    description: "A fine-tuned ViT-B/16 classifier refines each YOLO crop into 10 military-specific classes, boosting accuracy on ambiguous detections.",
+    stats: { label: "Classes", value: "10" },
     accent: "primary",
   },
   {
     icon: Radio,
-    title: "Signal Intelligence",
-    subtitle: "SIGINT Operations",
-    description: "Full-spectrum signal interception and analysis. Advanced cryptanalysis with AI-powered pattern recognition.",
-    stats: { label: "Bandwidth", value: "40GHz" },
+    title: "Geolocation Mapping",
+    subtitle: "OpenLayers Tactical Map",
+    description: "Every analysis is tagged with the device's GPS coordinates and plotted on a dark tactical map. Color-coded markers show threat vs verified status at a glance.",
+    stats: { label: "Map", value: "Live" },
     accent: "accent",
   },
   {
     icon: Brain,
-    title: "AI Threat Detection",
-    subtitle: "Predictive Analytics",
-    description: "Machine learning models trained on classified datasets. Real-time threat assessment with 99.4% accuracy.",
-    stats: { label: "Accuracy", value: "99.4%" },
+    title: "Transfer Learning",
+    subtitle: "Custom Model Training",
+    description: "Upload your own labeled dataset and retrain ViT, ResNet-50, or EfficientNet directly from the dashboard. Hot-swap the running model with zero downtime.",
+    stats: { label: "Architectures", value: "3" },
     accent: "accent",
   },
 ];
@@ -58,10 +58,10 @@ const CapabilitiesGrid = () => {
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Defense-Grade Intelligence Solutions
+            System Capabilities
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Integrated surveillance and reconnaissance systems designed for modern asymmetric warfare.
+            A two-stage AI pipeline backed by FastAPI, MongoDB, and a React dashboard with real-time analytics.
           </p>
         </motion.div>
         

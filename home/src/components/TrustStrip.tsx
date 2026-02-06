@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { Shield, CheckCircle } from "lucide-react";
 
 const certifications = [
-  { name: "ISO 27001", label: "Information Security" },
-  { name: "NIST 800-53", label: "Security Controls" },
-  { name: "NATO COSMIC", label: "Top Secret Clearance" },
-  { name: "FedRAMP High", label: "Federal Authorization" },
-  { name: "SOC 2 Type II", label: "Service Organization" },
+  { name: "PyTorch", label: "Deep Learning Framework" },
+  { name: "Ultralytics", label: "YOLOv8 Engine" },
+  { name: "Hugging Face", label: "ViT Pretrained Weights" },
+  { name: "OpenLayers", label: "Tactical Map Rendering" },
+  { name: "Clerk", label: "Authentication & Auth" },
 ];
 
 const TrustStrip = () => {
@@ -23,11 +23,11 @@ const TrustStrip = () => {
           <div className="inline-flex items-center gap-2 mb-2">
             <Shield className="w-5 h-5 text-primary" />
             <span className="text-sm font-mono text-muted-foreground uppercase tracking-wider">
-              Compliance & Certifications
+              Powered By
             </span>
           </div>
           <p className="text-foreground font-medium">
-            Trusted by defense agencies worldwide
+            Built with industry-leading open-source technologies
           </p>
         </motion.div>
         

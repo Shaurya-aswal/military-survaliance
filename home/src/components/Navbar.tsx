@@ -30,7 +30,7 @@ const Navbar = () => {
               <Shield className="w-5 h-5 text-primary" />
             </div>
             <span className="text-lg font-bold text-foreground tracking-tight">
-              SENTINEL<span className="text-primary">DEFENSE</span>
+              MILITARY<span className="text-primary">SURVEILLANCE</span>
             </span>
           </div>
           

@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Lock, Mail, Shield, MapPin, Phone } from "lucide-react";
+import { Lock, Mail, Shield, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
   
   return (
     <footer className="relative py-16 bg-gradient-to-t from-secondary to-background border-t border-border">
@@ -22,20 +22,20 @@ const Footer = () => {
                 <Shield className="w-5 h-5 text-primary" />
               </div>
               <span className="text-xl font-bold text-foreground tracking-tight">
-                SENTINEL<span className="text-primary">DEFENSE</span>
+                MILITARY<span className="text-primary">SURVEILLANCE</span>
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Advanced surveillance and intelligence solutions for defense agencies, 
-              government entities, and allied nations.
+              AI-powered military object detection and classification system using
+              YOLOv8 + Vision Transformer with real-time geolocation mapping.
             </p>
             <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
               <Lock className="w-3 h-3 text-primary" />
-              <span>End-to-End Encrypted Communications</span>
+              <span>Clerk-Authenticated Dashboard</span>
             </div>
           </motion.div>
           
-          {/* Contact */}
+          {/* Tech Stack */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -43,25 +43,18 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">
-              Secure Contact
+              Tech Stack
             </h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Mail className="w-4 h-4 text-primary" />
-                <span className="font-mono">secure@sentinel-defense.gov</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Phone className="w-4 h-4 text-primary" />
-                <span className="font-mono">+1 (202) XXX-XXXX</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span>Arlington, VA | London, UK | Tel Aviv, IL</span>
-              </div>
+            <div className="space-y-2 text-sm text-muted-foreground font-mono">
+              <p>FastAPI · Python · PyTorch</p>
+              <p>React · TypeScript · Vite</p>
+              <p>MongoDB · Zustand · Tailwind</p>
+              <p>OpenLayers · Clerk Auth</p>
+              <p>YOLOv8 · ViT-B/16</p>
             </div>
           </motion.div>
           
-          {/* Secure briefing form */}
+          {/* Quick links */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -69,23 +62,22 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">
-              Request Briefing
+              Quick Access
             </h4>
             <div className="space-y-3">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Enter secure email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-mono"
-                />
-                <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              </div>
-              <Button variant="tactical" className="w-full">
+              <Button variant="tactical" className="w-full" onClick={() => navigate('/auth')}>
                 <Lock className="w-4 h-4 mr-2" />
-                Submit Encrypted Request
+                Sign In to Dashboard
               </Button>
+              <a
+                href="https://github.com/Shaurya-aswal/military-survaliance"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded border border-border bg-secondary/50 text-sm text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors font-mono"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View on GitHub
+              </a>
             </div>
           </motion.div>
         </div>
@@ -93,19 +85,14 @@ const Footer = () => {
         {/* Disclaimer */}
         <div className="pt-8 border-t border-border">
           <p className="text-[10px] text-muted-foreground text-center font-mono leading-relaxed max-w-4xl mx-auto">
-            CLASSIFICATION: UNCLASSIFIED // FOR OFFICIAL USE ONLY. This website and its contents are 
-            intended solely for authorized government personnel and approved contractors with valid security 
-            clearances. Unauthorized access, use, or disclosure may result in civil and criminal penalties 
-            under 18 U.S.C. § 1030 and other applicable laws. All communications are monitored and recorded.
+            This is an academic / portfolio project demonstrating AI-based military object detection.
+            It is not affiliated with any government or defense organization. All data shown is generated
+            from user-uploaded images processed by open-source machine learning models.
           </p>
           <div className="flex items-center justify-center gap-4 mt-6 text-xs text-muted-foreground">
-            <span>© {new Date().getFullYear()} Sentinel Defense Systems</span>
+            <span>© {new Date().getFullYear()} Military Surveillance Project</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>Privacy Policy</span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>Terms of Service</span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>Security</span>
+            <span>Built by Shaurya</span>
           </div>
         </div>
       </div>
