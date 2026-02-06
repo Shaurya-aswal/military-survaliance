@@ -129,8 +129,22 @@ export default function ImageAnalysis() {
       setResult(data);
       setStage('done');
 
-      // Push results to global store for activity panel & history
-      pushPipelineResultsToStore(file.name, data);
+      // Get device geolocation for map pin
+      let coords: { lat: number; lng: number } | undefined;
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+        );
+        coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      } catch {
+        // Geolocation unavailable — marker won't appear on map
+      }
+
+      // Push results to global store for activity panel, history & map
+      pushPipelineResultsToStore(file.name, data, {
+        annotatedImageBase64: data.annotatedImageBase64,
+        coordinates: coords,
+      });
     } catch (err: any) {
       setErrorMsg(err.message || 'Pipeline failed');
       setStage('error');

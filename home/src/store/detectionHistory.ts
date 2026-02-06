@@ -13,6 +13,10 @@ export interface AnalysisRecord {
   processingTimeMs: number;
   /** Individual detection items produced by the pipeline */
   detections: Detection[];
+  /** Annotated image from the pipeline (base64 JPEG) */
+  annotatedImageBase64?: string;
+  /** Device geolocation at analysis time */
+  coordinates?: { lat: number; lng: number };
 }
 
 interface DetectionHistoryState {
@@ -71,6 +75,10 @@ export function pushPipelineResultsToStore(
     }>;
     processingTimeMs: number;
   },
+  extra?: {
+    annotatedImageBase64?: string;
+    coordinates?: { lat: number; lng: number };
+  },
 ) {
   const store = useDetectionHistory.getState();
   const now = new Date();
@@ -118,6 +126,8 @@ export function pushPipelineResultsToStore(
     analyzing,
     processingTimeMs: result.processingTimeMs,
     detections,
+    annotatedImageBase64: extra?.annotatedImageBase64,
+    coordinates: extra?.coordinates,
   });
 
   // One consolidated activity log per image (not one per detection)

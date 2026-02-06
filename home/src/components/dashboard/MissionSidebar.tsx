@@ -1,4 +1,4 @@
-import { Radio, History, BarChart3, Settings, LogOut, ScanSearch } from 'lucide-react';
+import { Radio, History, BarChart3, Settings, LogOut, ScanSearch, MapPin } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
 import { useClerk } from '@clerk/clerk-react';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const navItems = [
   { icon: Radio, label: 'Live Feed', path: '/dashboard' },
   { icon: ScanSearch, label: 'Image Analysis', path: '/dashboard/analysis' },
+  { icon: MapPin, label: 'Threat Map', path: '/dashboard/map' },
   { icon: History, label: 'History', path: '/dashboard/history' },
   { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },
   { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
