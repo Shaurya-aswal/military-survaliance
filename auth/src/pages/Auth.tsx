@@ -54,7 +54,7 @@ const Auth = () => {
     setIsLoading(false);
     
     // For now, show a message that backend is needed
-    setError('SYSTEM NOTICE: Backend authentication required. Enable Lovable Cloud to proceed.');
+    setError('SYSTEM NOTICE: Backend authentication required. Connect to the backend API to proceed.');
   };
 
   const handleGuestAccess = () => {
