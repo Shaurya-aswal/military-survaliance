@@ -11,6 +11,10 @@ export interface Detection {
   location?: string;
   coordinates?: { lat: number; lng: number };
   description?: string;
+  /** The image file name this detection originated from */
+  sourceImage?: string;
+  /** The analysis record ID this detection belongs to */
+  analysisId?: string;
 }
 
 export interface ActivityLog {
@@ -18,4 +22,6 @@ export interface ActivityLog {
   message: string;
   timestamp: string;
   type: 'alert' | 'system' | 'user';
+  /** Links this log entry back to an analysis record */
+  analysisId?: string;
 }

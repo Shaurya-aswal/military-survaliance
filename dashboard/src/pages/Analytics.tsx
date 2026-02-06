@@ -5,26 +5,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const stats = [
   {
     title: 'Total Detections',
-    value: '2,847',
-    change: '+12%',
+    value: '0',
+    change: '—',
     icon: BarChart3,
   },
   {
     title: 'Threats Identified',
-    value: '142',
-    change: '-8%',
+    value: '0',
+    change: '—',
     icon: AlertTriangle,
   },
   {
     title: 'Verified Contacts',
-    value: '1,983',
-    change: '+23%',
+    value: '0',
+    change: '—',
     icon: Shield,
   },
   {
     title: 'Avg Response Time',
-    value: '2.3s',
-    change: '-15%',
+    value: '0.0s',
+    change: '—',
     icon: TrendingUp,
   },
 ];

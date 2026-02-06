@@ -17,8 +17,10 @@ import {
   Crosshair,
   RotateCcw,
   ChevronRight,
+  Star,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { pushPipelineResultsToStore } from '@/store/detectionHistory';
 
 const API_BASE = 'http://localhost:8000';
 
@@ -83,6 +85,7 @@ export default function ImageAnalysis() {
   const [selectedCrop, setSelectedCrop] = useState<CropInfo | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [fileName, setFileName] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reset = () => {
@@ -91,11 +94,13 @@ export default function ImageAnalysis() {
     setPreviewUrl(null);
     setSelectedCrop(null);
     setErrorMsg(null);
+    setFileName('');
   };
 
   const processImage = useCallback(async (file: File) => {
     reset();
     setPreviewUrl(URL.createObjectURL(file));
+    setFileName(file.name);
 
     try {
       // Stage 1: uploading
@@ -123,6 +128,9 @@ export default function ImageAnalysis() {
       const data: PipelineResponse = await resp.json();
       setResult(data);
       setStage('done');
+
+      // Push results to global store for activity panel & history
+      pushPipelineResultsToStore(file.name, data);
     } catch (err: any) {
       setErrorMsg(err.message || 'Pipeline failed');
       setStage('error');
@@ -373,6 +381,11 @@ export default function ImageAnalysis() {
                           <th className="text-left py-3 px-2">Object</th>
                           <th className="text-left py-3 px-2">YOLO</th>
                           <th className="text-left py-3 px-2">ViT</th>
+                          <th className="text-left py-3 px-2">
+                            <span className="flex items-center gap-1 text-emerald-400">
+                              <Star className="w-3 h-3" /> Final Class
+                            </span>
+                          </th>
                           <th className="text-left py-3 px-2">Status</th>
                           <th className="text-left py-3 px-2">Bbox</th>
                         </tr>
@@ -417,6 +430,17 @@ export default function ImageAnalysis() {
                                 )}
                               </td>
                               <td className="py-3 px-2">
+                                <Badge
+                                  className={cn(
+                                    'text-xs font-bold font-mono px-2.5 py-1 border',
+                                    'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
+                                  )}
+                                >
+                                  <Star className="w-3 h-3 mr-1 inline-block" />
+                                  {crop.vitLabel || crop.yoloLabel}
+                                </Badge>
+                              </td>
+                              <td className="py-3 px-2">
                                 <Badge variant="outline" className={cn('text-[10px] font-mono', st.color)}>
                                   {st.label}
                                 </Badge>
@@ -429,7 +453,7 @@ export default function ImageAnalysis() {
                         })}
                         {result.crops.length === 0 && (
                           <tr>
-                            <td colSpan={6} className="py-8 text-center text-slate-500">
+                            <td colSpan={7} className="py-8 text-center text-slate-500">
                               No objects detected in this image
                             </td>
                           </tr>

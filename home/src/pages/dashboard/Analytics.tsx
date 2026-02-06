@@ -1,35 +1,49 @@
-import { BarChart3, TrendingUp, AlertTriangle, Shield } from 'lucide-react';
+import { BarChart3, TrendingUp, AlertTriangle, Shield, Image as ImageIcon } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-const stats = [
-  {
-    title: 'Total Detections',
-    value: '2,847',
-    change: '+12%',
-    icon: BarChart3,
-  },
-  {
-    title: 'Threats Identified',
-    value: '142',
-    change: '-8%',
-    icon: AlertTriangle,
-  },
-  {
-    title: 'Verified Contacts',
-    value: '1,983',
-    change: '+23%',
-    icon: Shield,
-  },
-  {
-    title: 'Avg Response Time',
-    value: '2.3s',
-    change: '-15%',
-    icon: TrendingUp,
-  },
-];
+import { useDetectionHistory } from '@/store/detectionHistory';
 
 export default function Analytics() {
+  const analyses = useDetectionHistory((s) => s.analyses);
+
+  const totalDetections = analyses.reduce((sum, a) => sum + a.totalDetections, 0);
+  const totalThreats = analyses.reduce((sum, a) => sum + a.threats, 0);
+  const totalVerified = analyses.reduce((sum, a) => sum + a.verified, 0);
+  const avgTime = analyses.length > 0
+    ? (analyses.reduce((sum, a) => sum + a.processingTimeMs, 0) / analyses.length / 1000).toFixed(1)
+    : '0.0';
+
+  const stats = [
+    {
+      title: 'Total Detections',
+      value: totalDetections.toLocaleString(),
+      sub: `from ${analyses.length} image${analyses.length !== 1 ? 's' : ''}`,
+      icon: BarChart3,
+    },
+    {
+      title: 'Threats Identified',
+      value: totalThreats.toLocaleString(),
+      sub: totalDetections > 0
+        ? `${((totalThreats / totalDetections) * 100).toFixed(0)}% of total`
+        : 'no data yet',
+      icon: AlertTriangle,
+    },
+    {
+      title: 'Verified Contacts',
+      value: totalVerified.toLocaleString(),
+      sub: totalDetections > 0
+        ? `${((totalVerified / totalDetections) * 100).toFixed(0)}% of total`
+        : 'no data yet',
+      icon: Shield,
+    },
+    {
+      title: 'Avg Processing Time',
+      value: `${avgTime}s`,
+      sub: analyses.length > 0 ? 'per image' : 'no data yet',
+      icon: TrendingUp,
+    },
+  ];
+
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'Analytics']} showActivityPanel={false}>
       <div className="p-6">
@@ -51,12 +65,7 @@ export default function Analytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-slate-100">{stat.value}</div>
-                <p className="text-xs text-slate-400 mt-1">
-                  <span className={stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}>
-                    {stat.change}
-                  </span>{' '}
-                  from last month
-                </p>
+                <p className="text-xs text-slate-500 mt-1">{stat.sub}</p>
               </CardContent>
             </Card>
           ))}

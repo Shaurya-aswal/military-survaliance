@@ -3,13 +3,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
-const historyItems = [
-  { id: '1', name: 'UAV - Model X', time: 'Today, 14:02', status: 'Acknowledged' },
-  { id: '2', name: 'Transport Vehicle', time: 'Today, 13:45', status: 'Verified' },
-  { id: '3', name: 'Unknown Personnel', time: 'Today, 12:30', status: 'Dismissed' },
-  { id: '4', name: 'Surveillance Drone', time: 'Yesterday, 22:15', status: 'Escalated' },
-  { id: '5', name: 'Armored Vehicle', time: 'Yesterday, 18:00', status: 'Verified' },
-];
+const historyItems: { id: string; name: string; time: string; status: string }[] = [];
 
 export default function History() {
   return (

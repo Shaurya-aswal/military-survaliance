@@ -56,6 +56,12 @@ export function ActivityPanel({ logs }: ActivityPanelProps) {
 
           <ScrollArea className="flex-1 px-4">
             <div className="space-y-3 py-4">
+              {logs.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-xs text-slate-500">No activity yet.</p>
+                  <p className="text-[10px] text-slate-600 mt-1">Run an Image Analysis to see results here.</p>
+                </div>
+              )}
               {logs.map((log) => {
                 const Icon = typeIcons[log.type];
                 return (

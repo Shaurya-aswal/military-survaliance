@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { MissionSidebar } from './MissionSidebar';
 import { MissionHeader } from './MissionHeader';
 import { ActivityPanel } from './ActivityPanel';
-import { mockActivityLogs } from '@/data/mockData';
+import { useDetectionHistory } from '@/store/detectionHistory';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -11,6 +11,8 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, breadcrumb, showActivityPanel = true }: DashboardLayoutProps) {
+  const activityLogs = useDetectionHistory((s) => s.activityLogs);
+
   return (
     <div className="min-h-screen bg-[hsl(222,47%,6%)]">
       {/* Sidebar */}
@@ -27,7 +29,7 @@ export function DashboardLayout({ children, breadcrumb, showActivityPanel = true
         </main>
 
         {/* Activity Panel */}
-        {showActivityPanel && <ActivityPanel logs={mockActivityLogs} />}
+        {showActivityPanel && <ActivityPanel logs={activityLogs} />}
       </div>
     </div>
   );
