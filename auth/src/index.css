@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Command Center Design System - Military/Tactical Theme */
+
+@layer base {
+  :root {
+    /* Core Palette - Deep Slate/Midnight */
+    --background: 222 47% 4%; /* #020617 slate-950 */
+    --foreground: 210 20% 80%; /* Off-white/Silver - never pure white */
+
+    /* Surface Cards - Dark with transparency */
+    --card: 217 33% 12%;
+    --card-foreground: 210 20% 80%;
+
+    --popover: 217 33% 12%;
+    --popover-foreground: 210 20% 80%;
+
+    /* Primary - Neon Emerald (Radar Green) */
+    --primary: 160 84% 39%; /* emerald-500 */
+    --primary-foreground: 222 47% 4%;
+
+    /* Secondary - Slate surface */
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 20% 80%;
+
+    /* Muted - Subdued tactical grey */
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 55%;
+
+    /* Accent - Amber for alerts/warnings */
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 4%;
+
+    /* Destructive - Rose/Red for errors */
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 20% 98%;
+
+    /* UI Elements */
+    --border: 217 33% 20%;
+    --input: 217 33% 15%;
+    --ring: 160 84% 39%;
+
+    --radius: 0.5rem;
+
+    /* Custom Tactical Colors */
+    --emerald-glow: 160 84% 50%;
+    --tactical-surface: 217 33% 12%;
+    --scanline-color: 160 84% 39%;
+  }
+
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 20% 80%;
+    --card: 217 33% 12%;
+    --card-foreground: 210 20% 80%;
+    --popover: 217 33% 12%;
+    --popover-foreground: 210 20% 80%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 20% 80%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 4%;
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 217 33% 20%;
+    --input: 217 33% 15%;
+    --ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Monospace for tactical elements */
+  .font-tactical {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Card */
+  .glass-card {
+    @apply bg-slate-900/80 backdrop-blur-xl border border-emerald-500/30;
+    box-shadow: 
+      0 0 20px rgba(16, 185, 129, 0.1),
+      0 0 40px rgba(16, 185, 129, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-card-glow {
+    @apply glass-card;
+    box-shadow: 
+      0 0 30px rgba(16, 185, 129, 0.2),
+      0 0 60px rgba(16, 185, 129, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* Tactical Input */
+  .tactical-input {
+    @apply bg-slate-800 border border-slate-700 text-slate-200 font-tactical text-sm;
+    @apply focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 focus:outline-none;
+    @apply placeholder:text-slate-500 transition-all duration-200;
+  }
+
+  /* Primary Action Button */
+  .btn-authenticate {
+    @apply bg-emerald-500 text-slate-950 font-bold uppercase tracking-widest;
+    @apply hover:bg-emerald-400 hover:shadow-lg hover:shadow-emerald-500/25;
+    @apply active:bg-emerald-600 transition-all duration-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Scanline Hover Effect */
+  .scanline-link {
+    @apply relative text-slate-400 hover:text-emerald-400 transition-colors duration-200;
+  }
+
+  .scanline-link::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-px bg-emerald-400;
+    @apply transition-all duration-300;
+  }
+
+  .scanline-link:hover::after {
+    @apply w-full;
+    box-shadow: 0 0 10px hsl(var(--emerald-glow));
+  }
+
+  /* Status Badge */
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 text-xs font-tactical uppercase tracking-wider;
+    @apply bg-slate-800/50 border border-slate-700 rounded-full;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full animate-pulse;
+  }
+
+  .status-dot-secure {
+    @apply bg-emerald-400 shadow-lg shadow-emerald-400/50;
+  }
+
+  .status-dot-warning {
+    @apply bg-amber-400 shadow-lg shadow-amber-400/50;
+  }
+
+  /* Tab Styling */
+  .tactical-tab {
+    @apply px-6 py-3 text-sm font-tactical uppercase tracking-wider;
+    @apply text-slate-400 border-b-2 border-transparent;
+    @apply hover:text-slate-200 transition-all duration-200;
+  }
+
+  .tactical-tab-active {
+    @apply text-emerald-400 border-emerald-400;
+  }
+}
+
+@layer utilities {
+  /* Tactical Grid Background */
+  .tactical-grid {
+    background-image: 
+      linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Radar Sweep Animation */
+  @keyframes radar-sweep {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-radar {
+    animation: radar-sweep 8s linear infinite;
+  }
+
+  /* Pulse Glow */
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.5;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+    50% {
+      opacity: 1;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Flicker Animation for Tactical Elements */
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+    75% { opacity: 0.95; }
+  }
+
+  .animate-flicker {
+    animation: flicker 4s ease-in-out infinite;
+  }
+}
