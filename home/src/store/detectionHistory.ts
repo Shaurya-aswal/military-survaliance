@@ -123,7 +123,7 @@ export const useDetectionHistory = create<DetectionHistoryState>((set) => ({
   },
 
   clearAll: async () => {
-    set({ analyses: [], activityLogs: [], allDetections: [] });
+    set({ analyses: [], activityLogs: [], allDetections: [], hydrated: false });
     await clearAllFromDB();
   },
 
