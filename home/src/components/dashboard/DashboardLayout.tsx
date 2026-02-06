@@ -18,18 +18,20 @@ export function DashboardLayout({ children, breadcrumb, showActivityPanel = true
       {/* Sidebar */}
       <MissionSidebar />
 
-      {/* Main content area */}
-      <div className="ml-16">
+      {/* Main content area — offset by collapsed sidebar width */}
+      <div className="ml-[68px] flex flex-col min-h-screen transition-all duration-300">
         {/* Header */}
         <MissionHeader breadcrumb={breadcrumb} />
 
-        {/* Content */}
-        <main className={showActivityPanel ? 'mr-72' : ''}>
-          {children}
-        </main>
+        {/* Content wrapper */}
+        <div className="flex flex-1 relative">
+          <main className={`flex-1 min-w-0 transition-all duration-300 ${showActivityPanel ? 'mr-80' : ''}`}>
+            {children}
+          </main>
 
-        {/* Activity Panel */}
-        {showActivityPanel && <ActivityPanel logs={activityLogs} />}
+          {/* Activity Panel */}
+          {showActivityPanel && <ActivityPanel logs={activityLogs} />}
+        </div>
       </div>
     </div>
   );

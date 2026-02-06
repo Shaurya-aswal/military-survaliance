@@ -34,9 +34,9 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <span className="text-foreground">Detect. Classify.</span>
+            <span className="text-foreground">See the World.</span>
             <br />
-            <span className="text-primary">Neutralize Threats.</span>
+            <span className="text-primary">Know the Now.</span>
           </motion.h1>
           
           {/* Subheadline */}
