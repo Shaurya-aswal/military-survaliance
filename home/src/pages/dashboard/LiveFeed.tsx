@@ -15,6 +15,7 @@ import {
   Search,
   Percent,
   ChevronRight,
+  Trash2,
 } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; color: string; border: string }> = {
@@ -32,6 +33,8 @@ const statusIcons = {
 export default function LiveFeed() {
   const [isLoading, setIsLoading] = useState(true);
   const analyses = useDetectionHistory((s) => s.analyses);
+  const removeAnalysis = useDetectionHistory((s) => s.removeAnalysis);
+  const clearAll = useDetectionHistory((s) => s.clearAll);
   const [selectedDetection, setSelectedDetection] = useState<Detection | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -43,11 +46,22 @@ export default function LiveFeed() {
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'Live Feed']}>
       <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-100">Live Detection Feed</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Real-time monitoring — all detections from one image grouped in a single container
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-100">Live Detection Feed</h1>
+            <p className="text-sm text-slate-400 mt-1">
+              Real-time monitoring — all detections from one image grouped in a single container
+            </p>
+          </div>
+          {analyses.length > 0 && (
+            <button
+              onClick={() => { if (window.confirm('Delete ALL analysis records? This cannot be undone.')) clearAll(); }}
+              className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear All
+            </button>
+          )}
         </div>
 
         {isLoading ? (
@@ -65,6 +79,7 @@ export default function LiveFeed() {
                 key={analysis.id}
                 analysis={analysis}
                 onViewDetails={(d) => { setSelectedDetection(d); setModalOpen(true); }}
+                onDelete={() => removeAnalysis(analysis.id)}
               />
             ))}
           </div>
@@ -93,9 +108,11 @@ export default function LiveFeed() {
 function ImageGroupCard({
   analysis,
   onViewDetails,
+  onDelete,
 }: {
   analysis: AnalysisRecord;
   onViewDetails: (d: Detection) => void;
+  onDelete: () => void;
 }) {
   const date = new Date(analysis.timestamp);
   const timeStr = date.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -152,6 +169,14 @@ function ImageGroupCard({
                 {analysis.verified} verified
               </Badge>
             )}
+            {/* Delete button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); if (window.confirm(`Delete analysis "${analysis.imageName}"?`)) onDelete(); }}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-500/15 hover:text-red-400"
+              title="Delete this analysis"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </CardHeader>

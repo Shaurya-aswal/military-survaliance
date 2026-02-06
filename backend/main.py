@@ -10,7 +10,7 @@ import time
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 import cv2
 import numpy as np
@@ -25,6 +25,9 @@ from PIL import Image
 from pydantic import BaseModel
 from ultralytics import YOLO
 import base64
+
+# MongoDB
+from motor.motor_asyncio import AsyncIOMotorClient
 
 # ──────────────────────────────────────────────
 # Config
@@ -108,6 +111,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ──────────────────────────────────────────────
+# MongoDB
+# ──────────────────────────────────────────────
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+mongo_client = AsyncIOMotorClient(MONGO_URL)
+db = mongo_client["military_surveillance"]
+analyses_col = db["analyses"]
+activity_logs_col = db["activity_logs"]
 
 # ──────────────────────────────────────────────
 # Schemas
@@ -925,6 +937,92 @@ async def retrain_model(
             elapsedSec=0,
             message="Training started in background. Poll GET /model/train/status for progress.",
         )
+
+
+# ──────────────────────────────────────────────
+# MongoDB CRUD – Analysis Records
+# ──────────────────────────────────────────────
+
+class StoredDetection(BaseModel):
+    id: str
+    objectName: str
+    status: str
+    timeDetected: str
+    confidenceScore: float
+    gradientFrom: str
+    gradientTo: str
+    description: Optional[str] = None
+    sourceImage: Optional[str] = None
+    analysisId: Optional[str] = None
+
+class AnalysisRecordIn(BaseModel):
+    id: str
+    imageName: str
+    timestamp: str
+    totalDetections: int
+    threats: int
+    verified: int
+    analyzing: int
+    processingTimeMs: float
+    detections: List[StoredDetection]
+    annotatedImageBase64: Optional[str] = None
+    coordinates: Optional[dict] = None  # {lat, lng}
+
+class ActivityLogIn(BaseModel):
+    id: str
+    message: str
+    timestamp: str
+    type: str
+    analysisId: Optional[str] = None
+
+
+@app.get("/db/analyses")
+async def get_all_analyses():
+    """Return all saved analysis records, newest first."""
+    docs = await analyses_col.find({}, {"_id": 0}).sort("timestamp", -1).to_list(1000)
+    return docs
+
+
+@app.post("/db/analyses")
+async def save_analysis(record: AnalysisRecordIn):
+    """Save (upsert) a single analysis record."""
+    doc = record.model_dump()
+    await analyses_col.replace_one({"id": doc["id"]}, doc, upsert=True)
+    return {"status": "saved", "id": doc["id"]}
+
+
+@app.delete("/db/analyses/{analysis_id}")
+async def delete_analysis(analysis_id: str):
+    """Delete a single analysis record and its associated activity logs."""
+    result = await analyses_col.delete_one({"id": analysis_id})
+    await activity_logs_col.delete_many({"analysisId": analysis_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    return {"status": "deleted", "id": analysis_id}
+
+
+@app.delete("/db/analyses")
+async def delete_all_analyses():
+    """Delete all analysis records and activity logs."""
+    await analyses_col.delete_many({})
+    await activity_logs_col.delete_many({})
+    return {"status": "cleared"}
+
+
+@app.get("/db/activity-logs")
+async def get_all_activity_logs():
+    """Return all activity logs, newest first."""
+    docs = await activity_logs_col.find({}, {"_id": 0}).sort("_insertedAt", -1).to_list(5000)
+    return docs
+
+
+@app.post("/db/activity-logs")
+async def save_activity_log(log: ActivityLogIn):
+    """Save a single activity log."""
+    doc = log.model_dump()
+    doc["_insertedAt"] = datetime.utcnow().isoformat()
+    await activity_logs_col.insert_one(doc)
+    return {"status": "saved", "id": doc["id"]}
 
 
 # ──────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, Search, AlertTriangle, CheckCircle, Eye, Zap } from 'lucide-react';
+import { Clock, Search, AlertTriangle, CheckCircle, Eye, Zap, Trash2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,8 @@ const statusColors: Record<string, string> = {
 
 export default function History() {
   const analyses = useDetectionHistory((s) => s.analyses);
+  const removeAnalysis = useDetectionHistory((s) => s.removeAnalysis);
+  const clearAll = useDetectionHistory((s) => s.clearAll);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filtered = analyses.filter((a) =>
@@ -24,11 +26,22 @@ export default function History() {
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'History']} showActivityPanel={false}>
       <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-100">Detection History</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Review past analyses and their results
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-100">Detection History</h1>
+            <p className="text-sm text-slate-400 mt-1">
+              Review past analyses and their results
+            </p>
+          </div>
+          {analyses.length > 0 && (
+            <button
+              onClick={() => { if (window.confirm('Delete ALL history? This cannot be undone.')) clearAll(); }}
+              className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear All
+            </button>
+          )}
         </div>
 
         <div className="relative mb-6 max-w-md">
@@ -86,6 +99,13 @@ export default function History() {
                     <Badge variant="outline" className="text-[10px] text-slate-300 border-slate-600">
                       {analysis.totalDetections} detection{analysis.totalDetections !== 1 ? 's' : ''}
                     </Badge>
+                    <button
+                      onClick={() => { if (window.confirm(`Delete analysis "${analysis.imageName}"?`)) removeAnalysis(analysis.id); }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-500/15 hover:text-red-400"
+                      title="Delete this analysis"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useDetectionHistory, AnalysisRecord } from '@/store/detectionHistory';
-import { MapPin, Crosshair, Layers, AlertTriangle, Shield, Clock } from 'lucide-react';
+import { MapPin, Crosshair, Layers, AlertTriangle, Shield, Clock, Trash2 } from 'lucide-react';
 
 // ── OpenLayers imports ──────────────────────────────────────────────
 import Map from 'ol/Map';
@@ -97,6 +97,11 @@ function buildPopupHTML(record: AnalysisRecord): string {
           📍 ${record.coordinates?.lat.toFixed(5)}, ${record.coordinates?.lng.toFixed(5)}
         </span>
       </div>
+      <div style="text-align:center;padding:4px 0 8px;">
+        <button data-delete-id="${record.id}" style="font-size:11px;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:4px 12px;cursor:pointer;transition:background 0.15s;">
+          🗑 Remove
+        </button>
+      </div>
     </div>
   `;
 }
@@ -112,6 +117,8 @@ export default function ThreatMap() {
   const overlayRef = useRef<Overlay | null>(null);
 
   const analyses = useDetectionHistory((s) => s.analyses);
+  const removeAnalysis = useDetectionHistory((s) => s.removeAnalysis);
+  const clearAll = useDetectionHistory((s) => s.clearAll);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
@@ -216,7 +223,22 @@ export default function ThreatMap() {
     mapInstanceRef.current = map;
     setMapReady(true);
 
+    // ── Popup delete button handler (event delegation) ──────────
+    const handlePopupClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('[data-delete-id]') as HTMLElement | null;
+      if (btn) {
+        const id = btn.getAttribute('data-delete-id');
+        if (id && window.confirm('Delete this analysis record?')) {
+          useDetectionHistory.getState().removeAnalysis(id);
+          overlay.setPosition(undefined);
+        }
+      }
+    };
+    popupRef.current?.addEventListener('click', handlePopupClick);
+
     return () => {
+      popupRef.current?.removeEventListener('click', handlePopupClick);
       map.setTarget(undefined);
       mapInstanceRef.current = null;
     };
@@ -389,6 +411,15 @@ export default function ThreatMap() {
               <span className="text-emerald-400 font-medium">{totalVerified}</span>
               <span className="text-slate-500">verified</span>
             </div>
+            {totalMarkers > 0 && (
+              <button
+                onClick={() => { if (window.confirm('Delete ALL analysis records? This cannot be undone.')) clearAll(); }}
+                className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1.5 text-[11px] font-medium text-red-400 transition-colors hover:bg-red-500/20"
+              >
+                <Trash2 className="h-3 w-3" />
+                Clear All
+              </button>
+            )}
           </div>
         </div>
 
