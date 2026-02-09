@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { Detection, ActivityLog } from '@/types/detection';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '/api';
 
 // ── Types ────────────────────────────────────────────────────────
 export interface AnalysisRecord {

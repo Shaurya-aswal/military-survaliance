@@ -7,6 +7,7 @@ import io
 import os
 import uuid
 import time
+import tempfile
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -414,6 +415,218 @@ async def detect_pipeline(file: UploadFile = File(...)):
             "vitClasses": VIT_CLASSES if vit_model else [],
         },
     )
+
+
+# ──────────────────────────────────────────────
+# Video Detection
+# ──────────────────────────────────────────────
+
+class FrameDetection(BaseModel):
+    """Detection results for a single video frame."""
+    frameIndex: int
+    timestamp: float  # seconds into the video
+    detections: list[DetectionResult]
+
+
+class VideoSummary(BaseModel):
+    """Aggregated stats across the whole video."""
+    totalFramesProcessed: int
+    totalDetections: int
+    uniqueObjects: list[str]
+    threats: int
+    verified: int
+    analyzing: int
+    avgConfidence: float
+    peakDetectionFrame: int  # frame with the most detections
+
+
+class VideoResponse(BaseModel):
+    """Full video pipeline response."""
+    annotatedVideoBase64: str   # base64-encoded MP4
+    thumbnailBase64: str        # base64 JPEG of the first annotated frame
+    frames: list[FrameDetection]
+    summary: VideoSummary
+    processingTimeMs: float
+    fps: float
+    totalFrames: int
+    width: int
+    height: int
+    modelInfo: dict
+
+
+def process_video_frame(frame_bgr: np.ndarray) -> tuple[np.ndarray, list[DetectionResult]]:
+    """Run YOLO+ViT pipeline on a single BGR frame, return annotated frame + detections."""
+    det_response = run_detection(frame_bgr)
+    annotated = draw_detections(frame_bgr, det_response)
+    return annotated, det_response.detections
+
+
+@app.post("/detect/video", response_model=VideoResponse)
+async def detect_video(
+    file: UploadFile = File(...),
+    frame_interval: int = Query(default=5, ge=1, le=60, description="Process every Nth frame"),
+    confidence: float = Query(default=25.0, ge=0, le=100, description="Min confidence threshold"),
+):
+    """
+    Upload a video file, run YOLO+ViT detection on sampled frames,
+    and return an annotated video (base64 MP4), per-frame detections, and summary.
+    """
+    total_start = time.time()
+
+    # Write uploaded file to a temp location so OpenCV can read it
+    contents = await file.read()
+    suffix = Path(file.filename or "video.mp4").suffix or ".mp4"
+    tmp_in = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    tmp_in.write(contents)
+    tmp_in.close()
+
+    try:
+        cap = cv2.VideoCapture(tmp_in.name)
+        if not cap.isOpened():
+            raise HTTPException(status_code=400, detail="Could not open video file")
+
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        # Prepare output video writer
+        tmp_out = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+        tmp_out.close()
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        writer = cv2.VideoWriter(tmp_out.name, fourcc, fps, (w, h))
+
+        frame_detections: list[FrameDetection] = []
+        all_det_objects: list[str] = []
+        all_confidences: list[float] = []
+        threat_count = 0
+        verified_count = 0
+        analyzing_count = 0
+        thumbnail_b64 = ""
+        frame_idx = 0
+        processed_count = 0
+        peak_frame = 0
+        peak_det_count = 0
+
+        # Cache: keep last annotated frame for non-processed frames
+        last_annotated: Optional[np.ndarray] = None
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            if frame_idx % frame_interval == 0:
+                # Run detection pipeline on this frame
+                annotated, dets = process_video_frame(frame)
+
+                # Filter by confidence threshold
+                dets = [d for d in dets if d.confidenceScore >= confidence]
+
+                ts = round(frame_idx / fps, 3)
+                frame_detections.append(FrameDetection(
+                    frameIndex=frame_idx,
+                    timestamp=ts,
+                    detections=dets,
+                ))
+
+                # Accumulate stats
+                for d in dets:
+                    all_det_objects.append(d.objectName)
+                    all_confidences.append(d.confidenceScore)
+                    if d.status == "threat":
+                        threat_count += 1
+                    elif d.status == "verified":
+                        verified_count += 1
+                    else:
+                        analyzing_count += 1
+
+                if len(dets) > peak_det_count:
+                    peak_det_count = len(dets)
+                    peak_frame = frame_idx
+
+                # Capture thumbnail from first processed frame
+                if processed_count == 0:
+                    _, thumb_buf = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                    thumbnail_b64 = base64.b64encode(thumb_buf.tobytes()).decode("utf-8")
+
+                last_annotated = annotated
+                processed_count += 1
+                writer.write(annotated)
+            else:
+                # Write the last annotated frame (or original) for continuity
+                writer.write(last_annotated if last_annotated is not None else frame)
+
+            frame_idx += 1
+
+        cap.release()
+        writer.release()
+
+        # Re-encode to proper MP4 with H.264 if ffmpeg available, else use mp4v output
+        tmp_final = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+        tmp_final.close()
+        try:
+            import subprocess
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", tmp_out.name, "-c:v", "libx264",
+                 "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p",
+                 "-movflags", "+faststart", tmp_final.name],
+                capture_output=True, timeout=120,
+            )
+            video_path = tmp_final.name
+        except Exception:
+            # Fallback: use raw mp4v output
+            video_path = tmp_out.name
+
+        with open(video_path, "rb") as f:
+            video_b64 = base64.b64encode(f.read()).decode("utf-8")
+
+        total_elapsed = round((time.time() - total_start) * 1000, 2)
+
+        total_dets = len(all_confidences)
+        avg_conf = round(sum(all_confidences) / total_dets, 2) if total_dets else 0.0
+        unique_objects = sorted(set(all_det_objects))
+
+        return VideoResponse(
+            annotatedVideoBase64=video_b64,
+            thumbnailBase64=thumbnail_b64,
+            frames=frame_detections,
+            summary=VideoSummary(
+                totalFramesProcessed=processed_count,
+                totalDetections=total_dets,
+                uniqueObjects=unique_objects,
+                threats=threat_count,
+                verified=verified_count,
+                analyzing=analyzing_count,
+                avgConfidence=avg_conf,
+                peakDetectionFrame=peak_frame,
+            ),
+            processingTimeMs=total_elapsed,
+            fps=round(fps, 2),
+            totalFrames=total_frames,
+            width=w,
+            height=h,
+            modelInfo={
+                "yolo": "loaded" if yolo_model else "not loaded",
+                "vit": "loaded" if vit_model else "not loaded",
+                "device": DEVICE,
+                "vitClasses": VIT_CLASSES if vit_model else [],
+            },
+        )
+
+    finally:
+        # Cleanup temp files
+        cleanup_paths = [tmp_in.name, tmp_out.name]
+        try:
+            cleanup_paths.append(tmp_final.name)
+        except NameError:
+            pass
+        for p in cleanup_paths:
+            try:
+                if p and os.path.exists(p):
+                    os.unlink(p)
+            except Exception:
+                pass
 
 
 # ──────────────────────────────────────────────

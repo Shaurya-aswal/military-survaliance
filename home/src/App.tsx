@@ -14,6 +14,7 @@ import Analytics from "./pages/dashboard/Analytics";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import ImageAnalysis from "./pages/dashboard/ImageAnalysis";
 import ThreatMap from "./pages/dashboard/ThreatMap";
+import VideoAnalysis from "./pages/dashboard/VideoAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/dashboard/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           <Route path="/dashboard/analysis" element={<ProtectedRoute><ImageAnalysis /></ProtectedRoute>} />
           <Route path="/dashboard/map" element={<ProtectedRoute><ThreatMap /></ProtectedRoute>} />
+          <Route path="/dashboard/video" element={<ProtectedRoute><VideoAnalysis /></ProtectedRoute>} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

@@ -22,7 +22,7 @@ import {
 import { cn } from '@/lib/utils';
 import { pushPipelineResultsToStore } from '@/store/detectionHistory';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '/api';
 
 // ── Types ──
 

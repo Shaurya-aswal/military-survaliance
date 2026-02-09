@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Crosshair,
+  Video,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,7 @@ import {
 const navItems = [
   { icon: Radio, label: 'Live Feed', path: '/dashboard', description: 'Real-time detections' },
   { icon: ScanSearch, label: 'Analysis', path: '/dashboard/analysis', description: 'Image analysis pipeline' },
+  { icon: Video, label: 'Video', path: '/dashboard/video', description: 'Video analysis pipeline' },
   { icon: MapPin, label: 'Threat Map', path: '/dashboard/map', description: 'Geospatial overview' },
   { icon: History, label: 'History', path: '/dashboard/history', description: 'Past analyses' },
   { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics', description: 'Statistics & metrics' },
