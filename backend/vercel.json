@@ -2,21 +2,17 @@
   "version": 2,
   "builds": [
     {
-      "src": "main.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "100mb"
+        "maxLambdaSize": "50mb"
       }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "main.py"
+      "dest": "api/index.py"
     }
-  ],
-  "env": {
-    "MONGO_URL": "@mongo_url",
-    "CLERK_PUBLISHABLE_KEY": "@clerk_publishable_key"
-  }
+  ]
 }

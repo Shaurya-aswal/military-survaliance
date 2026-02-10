@@ -17,3 +17,6 @@ htmlcov/
 .env
 .venv
 pyrightconfig.json
+model/
+*.pt
+*.pth
