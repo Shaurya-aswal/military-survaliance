@@ -258,3 +258,107 @@ export function pushPipelineResultsToStore(
     });
   }
 }
+
+/**
+ * Helper: convert VIDEO pipeline results into store entries.
+ * Call this from VideoAnalysis after a successful pipeline run.
+ * Groups all detections from all frames under one AnalysisRecord.
+ */
+export function pushVideoResultsToStore(
+  videoName: string,
+  result: {
+    frames: Array<{
+      frameIndex: number;
+      timestamp: number;
+      detections: Array<{
+        id: string;
+        objectName: string;
+        status: string;
+        confidenceScore: number;
+        vitLabel: string | null;
+        vitConfidence: number | null;
+      }>;
+    }>;
+    summary: {
+      totalDetections: number;
+      threats: number;
+      verified: number;
+      analyzing: number;
+    };
+    processingTimeMs: number;
+  },
+  extra?: {
+    annotatedImageBase64?: string;   // thumbnail
+    coordinates?: { lat: number; lng: number };
+  },
+) {
+  const store = useDetectionHistory.getState();
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const analysisId = `analysis-${Date.now()}`;
+
+  const gradients: Record<string, { from: string; to: string }> = {
+    threat: { from: 'from-red-600', to: 'to-orange-500' },
+    verified: { from: 'from-emerald-600', to: 'to-cyan-500' },
+    analyzing: { from: 'from-amber-500', to: 'to-yellow-400' },
+  };
+
+  // Flatten all per-frame detections into one list
+  const detections: Detection[] = result.frames.flatMap((frame) =>
+    frame.detections.map((d) => {
+      const g = gradients[d.status] || gradients.analyzing;
+      return {
+        id: `det-${_nextDetectionId++}`,
+        objectName: d.objectName,
+        status: (d.status as Detection['status']) || 'analyzing',
+        timeDetected: timeStr,
+        confidenceScore: d.confidenceScore,
+        gradientFrom: g.from,
+        gradientTo: g.to,
+        description: d.vitLabel
+          ? `Frame #${frame.frameIndex} @ ${frame.timestamp.toFixed(1)}s — ${d.vitLabel} (${d.vitConfidence}% ViT)`
+          : `Frame #${frame.frameIndex} @ ${frame.timestamp.toFixed(1)}s — ${d.objectName} (YOLO)`,
+        sourceImage: videoName,
+        analysisId,
+      };
+    })
+  );
+
+  const threats = result.summary.threats;
+  const verified = result.summary.verified;
+  const analyzing = result.summary.analyzing;
+
+  store.addAnalysis({
+    id: analysisId,
+    imageName: `🎬 ${videoName}`,
+    timestamp: now.toISOString(),
+    totalDetections: detections.length,
+    threats,
+    verified,
+    analyzing,
+    processingTimeMs: result.processingTimeMs,
+    detections,
+    annotatedImageBase64: extra?.annotatedImageBase64,
+    coordinates: extra?.coordinates,
+  });
+
+  const uniqueObjects = [...new Set(detections.map((d) => d.objectName))];
+  store.addActivityLog({
+    id: `act-${_nextActivityId++}`,
+    message: `Video analysis of "${videoName}" — ${detections.length} detection(s) across ${result.frames.length} frames [${uniqueObjects.join(', ')}] in ${result.processingTimeMs.toFixed(0)}ms`,
+    timestamp: timeStr,
+    type: threats > 0 ? 'alert' : 'system',
+    analysisId,
+  });
+
+  if (threats > 0) {
+    store.addActivityLog({
+      id: `act-${_nextActivityId++}`,
+      message: `⚠ ${threats} threat(s) identified in video "${videoName}"`,
+      timestamp: timeStr,
+      type: 'alert',
+      analysisId,
+    });
+  }
+}

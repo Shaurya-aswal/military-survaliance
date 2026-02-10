@@ -67,16 +67,16 @@ export default function History() {
 
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'History']} showActivityPanel={false}>
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
         {/* Page header */}
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20 shrink-0">
               <HistoryIcon className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Detection History</h1>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">Detection History</h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                 Review and manage past analyses
               </p>
             </div>
@@ -160,15 +160,6 @@ export default function History() {
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Table header */}
-            <div className="hidden sm:grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 px-5 py-2 text-[10px] font-semibold text-slate-600 uppercase tracking-widest">
-              <span>Analysis</span>
-              <span className="w-20 text-center">Objects</span>
-              <span className="w-20 text-center">Speed</span>
-              <span className="w-48 text-center">Status</span>
-              <span className="w-8" />
-            </div>
-
             {filtered.map((analysis, i) => {
               const date = new Date(analysis.timestamp);
               const timeStr = date.toLocaleString('en-US', {
@@ -181,47 +172,47 @@ export default function History() {
                 <div
                   key={analysis.id}
                   className={cn(
-                    'rounded-xl border bg-[hsl(222,47%,8%)]/80 p-4 transition-all duration-300 hover:shadow-lg group animate-fade-in',
+                    'rounded-xl border bg-[hsl(222,47%,8%)]/80 p-3 sm:p-4 transition-all duration-300 hover:shadow-lg group animate-fade-in',
                     hasThreat
                       ? 'border-red-500/20 hover:border-red-500/30 hover:shadow-red-500/5'
-                      : 'border-[hsl(217,33%,17%)]/60 hover:border-blue-500/20 hover:shadow-blue-500/5'
+                      : 'border-[hsl(217,33%,17%)]/60 hover:border-blue-500/20 hover:shadow-blue-500/5',
                   )}
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center justify-between gap-3 sm:gap-4">
                     {/* Image info */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                       <div className={cn(
-                        'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors',
+                        'flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl border transition-colors',
                         hasThreat
                           ? 'bg-red-500/10 border-red-500/20'
-                          : 'bg-[hsl(217,33%,17%)]/50 border-[hsl(217,33%,17%)]/60'
+                          : 'bg-[hsl(217,33%,17%)]/50 border-[hsl(217,33%,17%)]/60',
                       )}>
-                        <ImageIcon className={cn('h-5 w-5', hasThreat ? 'text-red-400' : 'text-slate-400')} />
+                        <ImageIcon className={cn('h-4 w-4 sm:h-5 sm:w-5', hasThreat ? 'text-red-400' : 'text-slate-400')} />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-slate-100 truncate">{analysis.imageName}</p>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {timeStr}
+                        <p className="text-sm font-semibold text-slate-100 truncate">{analysis.imageName}</p>
+                        <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono mt-0.5 flex items-center gap-1">
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{timeStr}</span>
                         </p>
                       </div>
                     </div>
 
-                    {/* Object count */}
-                    <div className="hidden sm:flex flex-col items-center w-20 shrink-0">
+                    {/* Object count — hidden on mobile */}
+                    <div className="hidden sm:flex flex-col items-center w-16 shrink-0">
                       <span className="text-base font-bold text-slate-100 font-mono">{analysis.totalDetections}</span>
                       <span className="text-[10px] text-slate-500">objects</span>
                     </div>
 
-                    {/* Speed */}
-                    <div className="hidden sm:flex items-center gap-1 w-20 justify-center shrink-0">
+                    {/* Speed — hidden on mobile */}
+                    <div className="hidden sm:flex items-center gap-1 w-16 justify-center shrink-0">
                       <Zap className="w-3 h-3 text-amber-400" />
                       <span className="text-xs text-slate-400 font-mono">{analysis.processingTimeMs.toFixed(0)}ms</span>
                     </div>
 
-                    {/* Status badges */}
-                    <div className="hidden sm:flex items-center gap-1.5 w-48 justify-center shrink-0 flex-wrap">
+                    {/* Status badges — hidden on mobile for threat/verified/analyzing breakdown */}
+                    <div className="hidden md:flex items-center gap-1.5 w-40 justify-center shrink-0 flex-wrap">
                       {analysis.threats > 0 && (
                         <Badge className={cn('text-[10px] font-mono', statusColors.threat)}>
                           <AlertTriangle className="w-3 h-3 mr-1" />
@@ -242,18 +233,30 @@ export default function History() {
                       )}
                     </div>
 
+                    {/* Mobile compact stats */}
+                    <div className="flex sm:hidden items-center gap-1.5 shrink-0">
+                      <Badge variant="outline" className="text-[9px] font-mono text-slate-300 border-slate-600/60">
+                        {analysis.totalDetections}
+                      </Badge>
+                      {analysis.threats > 0 && (
+                        <Badge className="text-[9px] font-mono text-red-400 bg-red-500/10 border border-red-500/30 px-1.5">
+                          {analysis.threats}⚠
+                        </Badge>
+                      )}
+                    </div>
+
                     {/* Delete */}
                     <button
                       onClick={() => { if (window.confirm(`Delete analysis "${analysis.imageName}"?`)) removeAnalysis(analysis.id); }}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-red-500/10 hover:text-red-400"
+                      className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-red-500/10 hover:text-red-400"
                       title="Delete this analysis"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
                   </div>
 
-                  {/* Detection chips — expandable row */}
-                  <div className="flex flex-wrap gap-1.5 mt-3 pl-14">
+                  {/* Detection chips */}
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5 mt-2 sm:mt-3 pl-0 sm:pl-14">
                     {analysis.detections.map((d) => (
                       <span
                         key={d.id}

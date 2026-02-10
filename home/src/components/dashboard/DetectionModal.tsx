@@ -30,7 +30,7 @@ export function DetectionModal({ detection, open, onOpenChange }: DetectionModal
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl bg-[hsl(222,47%,6%)] border-[hsl(217,33%,17%)]/60 p-0 overflow-hidden rounded-2xl">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl bg-[hsl(222,47%,6%)] border-[hsl(217,33%,17%)]/60 p-0 overflow-hidden rounded-2xl max-h-[90vh] overflow-y-auto">
         {/* Hero image area */}
         <div className="relative">
           <AspectRatio ratio={16 / 9}>
@@ -62,15 +62,15 @@ export function DetectionModal({ detection, open, onOpenChange }: DetectionModal
           </div>
         </div>
 
-        <div className="p-6 pt-3 space-y-5">
+        <div className="p-4 sm:p-6 pt-3 space-y-4 sm:space-y-5">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-100 tracking-tight">
+            <DialogTitle className="text-lg sm:text-xl font-bold text-slate-100 tracking-tight">
               {detection.objectName}
             </DialogTitle>
           </DialogHeader>
 
           {/* Info grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             <InfoTile icon={Clock} label="Time Detected" value={detection.timeDetected} />
             <InfoTile icon={Shield} label="Confidence" value={`${detection.confidenceScore}%`} />
             {detection.location && (
@@ -96,7 +96,7 @@ export function DetectionModal({ detection, open, onOpenChange }: DetectionModal
           )}
 
           {/* Actions */}
-          <div className="flex gap-2.5 pt-1">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5 pt-1">
             <Button
               className="flex-1 bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 rounded-xl h-10 text-xs font-semibold"
               variant="ghost"

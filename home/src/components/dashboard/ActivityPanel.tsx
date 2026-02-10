@@ -7,6 +7,8 @@ import { ActivityLog } from '@/types/detection';
 
 interface ActivityPanelProps {
   logs: ActivityLog[];
+  /** When true, renders inline (no fixed positioning or toggle button) — used inside mobile drawer */
+  embedded?: boolean;
 }
 
 const typeIcons = {
@@ -41,10 +43,62 @@ function formatRelativeTime(timestamp: string): string {
   return `${diffDay}d ago`;
 }
 
-export function ActivityPanel({ logs }: ActivityPanelProps) {
+export function ActivityPanel({ logs, embedded = false }: ActivityPanelProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const alertCount = logs.filter((l) => l.type === 'alert').length;
+
+  // Embedded mode: render just the log list, no fixed positioning or toggle
+  if (embedded) {
+    return (
+      <div className="flex h-full flex-col">
+        <ScrollArea className="flex-1">
+          <div className="px-4 py-3 space-y-2">
+            {logs.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(217,33%,17%)]/30 mx-auto mb-4">
+                  <Activity className="h-6 w-6 text-slate-600" />
+                </div>
+                <p className="text-sm font-medium text-slate-500">No activity yet</p>
+                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                  Run an image analysis to see events appear here in real-time.
+                </p>
+              </div>
+            ) : (
+              logs.map((log, index) => {
+                const Icon = typeIcons[log.type];
+                const colorCls = typeColors[log.type];
+                const dotCls = typeDots[log.type];
+                return (
+                  <div
+                    key={log.id}
+                    className="group relative flex gap-3 rounded-xl p-3 transition-all duration-200 hover:bg-[hsl(217,33%,17%)]/30"
+                  >
+                    {index < logs.length - 1 && (
+                      <div className="absolute left-[26px] top-[42px] bottom-[-8px] w-px bg-[hsl(217,33%,17%)]/40" />
+                    )}
+                    <div className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors', colorCls)}>
+                      <Icon className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-slate-200 leading-relaxed">{log.message}</p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className={cn('h-1.5 w-1.5 rounded-full', dotCls)} />
+                        <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                          <Clock className="h-2.5 w-2.5" />
+                          {formatRelativeTime(log.timestamp)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  }
 
   return (
     <aside

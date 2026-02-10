@@ -109,6 +109,10 @@ export default {
           "0%, 50%, 100%": { opacity: "1" },
           "25%, 75%": { opacity: "0.5" },
         },
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -117,6 +121,7 @@ export default {
         "scan-horizontal": "scan-horizontal 2s linear infinite",
         "radar-sweep": "radar-sweep 4s linear infinite",
         "blink": "blink 1s step-end infinite",
+        "slide-in-right": "slide-in-right 0.25s ease-out forwards",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

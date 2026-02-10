@@ -312,7 +312,7 @@ export default function ThreatMap() {
           border: 1px solid rgba(51, 65, 85, 0.7);
           border-radius: 10px;
           box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-          width: 320px;
+          width: min(320px, 90vw);
           max-height: 420px;
           overflow-y: auto;
           font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
@@ -377,61 +377,61 @@ export default function ThreatMap() {
         .ol-overlay-container { overflow: visible; }
       `}</style>
 
-      <div className="flex flex-col gap-4 p-6" style={{ height: 'calc(100vh - 56px)' }}>
+      <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-6 pb-20 md:pb-6" style={{ height: 'calc(100vh - 56px)' }}>
         {/* ── Header bar ──────────────────────────────────────────── */}
-        <div className="flex items-center justify-between flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20">
-              <MapPin className="h-5 w-5 text-blue-400" />
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-blue-500/20 shrink-0">
+              <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-100 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-slate-100 tracking-tight">
                 Tactical Threat Map
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-[10px] sm:text-xs text-slate-400">
                 Geolocated analysis results &middot; Real-time overlay
               </p>
             </div>
           </div>
 
           {/* Quick stats */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <div className="flex items-center gap-1.5 text-xs">
               <Layers className="h-3.5 w-3.5 text-blue-400" />
               <span className="text-slate-300 font-medium">{totalMarkers}</span>
-              <span className="text-slate-500">markers</span>
+              <span className="text-slate-500 hidden sm:inline">markers</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
               <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
               <span className="text-red-400 font-medium">{totalThreats}</span>
-              <span className="text-slate-500">threats</span>
+              <span className="text-slate-500 hidden sm:inline">threats</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
               <Shield className="h-3.5 w-3.5 text-emerald-400" />
               <span className="text-emerald-400 font-medium">{totalVerified}</span>
-              <span className="text-slate-500">verified</span>
+              <span className="text-slate-500 hidden sm:inline">verified</span>
             </div>
             {totalMarkers > 0 && (
               <button
                 onClick={() => { if (window.confirm('Delete ALL analysis records? This cannot be undone.')) clearAll(); }}
-                className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1.5 text-[11px] font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2 sm:px-2.5 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-medium text-red-400 transition-colors hover:bg-red-500/20"
               >
                 <Trash2 className="h-3 w-3" />
-                Clear All
+                <span className="hidden sm:inline">Clear All</span>
               </button>
             )}
           </div>
         </div>
 
         {/* ── Map container ───────────────────────────────────────── */}
-        <div className="relative flex-1 min-h-0 rounded-xl border border-[hsl(217,33%,17%)] overflow-hidden">
+        <div className="relative flex-1 min-h-0 rounded-lg sm:rounded-xl border border-[hsl(217,33%,17%)] overflow-hidden">
           <div ref={mapRef} className="w-full h-full" />
 
           {/* Popup container (positioned by OL overlay) */}
           <div ref={popupRef} />
 
           {/* Floating controls */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
+          <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 z-10">
             <button
               onClick={centerOnUser}
               disabled={!userLocation}
@@ -451,9 +451,9 @@ export default function ThreatMap() {
           </div>
 
           {/* Legend */}
-          <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-lg bg-slate-900/80 border border-slate-700/60 px-3 py-2 backdrop-blur-sm z-10">
+          <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 flex items-center gap-2 sm:gap-3 rounded-lg bg-slate-900/80 border border-slate-700/60 px-2 sm:px-3 py-1.5 sm:py-2 backdrop-blur-sm z-10">
             {Object.entries(STATUS_COLORS).map(([key, val]) => (
-              <div key={key} className="flex items-center gap-1.5 text-[10px] text-slate-300">
+              <div key={key} className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] text-slate-300">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-full"
                   style={{ background: val.fill, border: `1.5px solid ${val.stroke}` }}

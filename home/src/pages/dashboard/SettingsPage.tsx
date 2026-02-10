@@ -82,15 +82,15 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'Settings']} showActivityPanel={false}>
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
         {/* Page header */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-500/10 border border-slate-500/20">
-            <SettingsIcon className="h-5 w-5 text-slate-400" />
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-slate-500/10 border border-slate-500/20 shrink-0">
+            <SettingsIcon className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Settings</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">Settings</h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
               Configure your mission control preferences
             </p>
           </div>
@@ -99,27 +99,27 @@ export default function SettingsPage() {
         {/* Profile card */}
         <Card className="bg-[hsl(222,47%,8%)]/80 border-[hsl(217,33%,17%)]/60 overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
-          <CardContent className="p-5">
-            <div className="flex items-center gap-4">
-              <div className="relative">
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="relative shrink-0">
                 {user?.imageUrl ? (
                   <img
                     src={user.imageUrl}
                     alt={displayName}
-                    className="h-14 w-14 rounded-xl border-2 border-[hsl(217,33%,17%)] object-cover"
+                    className="h-11 w-11 sm:h-14 sm:w-14 rounded-xl border-2 border-[hsl(217,33%,17%)] object-cover"
                   />
                 ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border-2 border-[hsl(217,33%,17%)]">
-                    <User className="h-6 w-6 text-blue-300" />
+                  <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border-2 border-[hsl(217,33%,17%)]">
+                    <User className="h-5 w-5 sm:h-6 sm:w-6 text-blue-300" />
                   </div>
                 )}
-                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-[hsl(222,47%,8%)] bg-emerald-400" />
+                <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 border-[hsl(222,47%,8%)] bg-emerald-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-lg font-semibold text-slate-100">{displayName}</p>
-                <p className="text-sm text-slate-500 truncate">{email}</p>
+                <p className="text-base sm:text-lg font-semibold text-slate-100 truncate">{displayName}</p>
+                <p className="text-xs sm:text-sm text-slate-500 truncate">{email}</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Badge className="text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
                   Operator Level-3
                 </Badge>
@@ -133,35 +133,35 @@ export default function SettingsPage() {
         </Card>
 
         {/* Settings sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
           {settingsSections.map((section, sectionIdx) => (
             <Card
               key={section.title}
               className="bg-[hsl(222,47%,8%)]/80 border-[hsl(217,33%,17%)]/60 transition-all duration-300 hover:shadow-lg animate-fade-in"
               style={{ animationDelay: `${sectionIdx * 80}ms` }}
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 px-3 sm:px-6">
                 <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl border', section.iconBg)}>
-                    <section.icon className={cn('h-5 w-5', section.iconColor)} />
+                  <div className={cn('flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border shrink-0', section.iconBg)}>
+                    <section.icon className={cn('h-4 w-4 sm:h-5 sm:w-5', section.iconColor)} />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <CardTitle className="text-sm font-semibold text-slate-100">{section.title}</CardTitle>
-                    <CardDescription className="text-[11px] text-slate-500">{section.description}</CardDescription>
+                    <CardDescription className="text-[11px] text-slate-500 hidden sm:block">{section.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-1 pt-0">
+              <CardContent className="space-y-1 pt-0 px-2 sm:px-6">
                 {section.settings.map((setting) => (
                   <div
                     key={setting.id}
-                    className="flex items-center justify-between rounded-xl p-3 transition-colors hover:bg-[hsl(217,33%,17%)]/20 group"
+                    className="flex items-center justify-between rounded-xl p-2 sm:p-3 transition-colors hover:bg-[hsl(217,33%,17%)]/20 group"
                   >
-                    <div className="min-w-0 pr-4">
-                      <Label htmlFor={setting.id} className="text-sm text-slate-200 font-medium cursor-pointer">
+                    <div className="min-w-0 pr-3 sm:pr-4">
+                      <Label htmlFor={setting.id} className="text-xs sm:text-sm text-slate-200 font-medium cursor-pointer">
                         {setting.label}
                       </Label>
-                      <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{setting.description}</p>
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 leading-relaxed hidden sm:block">{setting.description}</p>
                     </div>
                     <Switch id={setting.id} defaultChecked={setting.defaultOn} />
                   </div>
@@ -173,9 +173,9 @@ export default function SettingsPage() {
 
         {/* System info footer */}
         <Card className="bg-[hsl(222,47%,8%)]/80 border-[hsl(217,33%,17%)]/60">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-6">
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:flex items-center gap-4 sm:gap-6">
                 {[
                   { label: 'Backend', value: 'FastAPI', icon: Zap },
                   { label: 'Detection', value: 'YOLOv8n', icon: Eye },
@@ -183,7 +183,7 @@ export default function SettingsPage() {
                   { label: 'Database', value: 'MongoDB', icon: Database },
                 ].map((info) => (
                   <div key={info.label} className="flex items-center gap-2">
-                    <info.icon className="h-3.5 w-3.5 text-slate-500" />
+                    <info.icon className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                     <div>
                       <p className="text-[10px] text-slate-600 uppercase tracking-wider">{info.label}</p>
                       <p className="text-xs text-slate-400 font-mono">{info.value}</p>

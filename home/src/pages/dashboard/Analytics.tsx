@@ -120,22 +120,22 @@ export default function Analytics() {
 
   return (
     <DashboardLayout breadcrumb={['Mission Control', 'Analytics']} showActivityPanel={false}>
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
         {/* Page header */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20 shrink-0">
             <BarChart3 className="h-5 w-5 text-amber-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Analytics Dashboard</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">Analytics Dashboard</h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
               Performance metrics and detection statistics
             </p>
           </div>
         </div>
 
         {/* Stat cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((stat, i) => (
             <Card
               key={stat.title}
@@ -159,7 +159,7 @@ export default function Analytics() {
         </div>
 
         {/* Charts row */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
           {/* Object Frequency Bar Chart */}
           <Card className="bg-[hsl(222,47%,8%)]/80 border-[hsl(217,33%,17%)]/60">
             <CardHeader className="pb-2">
@@ -214,9 +214,9 @@ export default function Analytics() {
               {totalDetections === 0 ? (
                 <EmptyChart message="Run analyses to see threat distribution" />
               ) : (
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                   {/* CSS Donut */}
-                  <div className="relative h-44 w-44 shrink-0">
+                  <div className="relative h-36 w-36 sm:h-44 sm:w-44 shrink-0">
                     <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
                       {(() => {
                         const segments = [
@@ -285,7 +285,7 @@ export default function Analytics() {
         </div>
 
         {/* Bottom row */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
           {/* Confidence Distribution */}
           <Card className="bg-[hsl(222,47%,8%)]/80 border-[hsl(217,33%,17%)]/60">
             <CardHeader className="pb-2">
@@ -298,7 +298,7 @@ export default function Analytics() {
               {totalDetections === 0 ? (
                 <EmptyChart message="Run analyses to see confidence distribution" />
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {confidenceBuckets.map((bucket) => (
                     <div key={bucket.label}>
                       <div className="flex items-center justify-between mb-1">
@@ -339,17 +339,17 @@ export default function Analytics() {
               {speedData.length === 0 ? (
                 <EmptyChart message="Run analyses to see processing speed" />
               ) : (
-                <div className="flex items-end gap-2 h-40">
+                <div className="flex items-end gap-1 sm:gap-2 h-32 sm:h-40">
                   {speedData.map((item, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group/speed">
-                      <span className="text-[9px] font-mono text-slate-500 opacity-0 group-hover/speed:opacity-100 transition-opacity">
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group/speed min-w-0">
+                      <span className="text-[8px] sm:text-[9px] font-mono text-slate-500 opacity-0 group-hover/speed:opacity-100 transition-opacity">
                         {item.ms.toFixed(0)}ms
                       </span>
                       <div
                         className="w-full rounded-t-md bg-gradient-to-t from-amber-600 to-amber-400 transition-all duration-500 hover:from-amber-500 hover:to-amber-300 min-h-[4px]"
                         style={{ height: `${(item.ms / maxSpeed) * 100}%` }}
                       />
-                      <span className="text-[8px] font-mono text-slate-600 truncate w-full text-center">
+                      <span className="text-[7px] sm:text-[8px] font-mono text-slate-600 truncate w-full text-center">
                         {item.name}
                       </span>
                     </div>
