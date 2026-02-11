@@ -1,0 +1,27 @@
+# Hugging Face Spaces Requirements (CPU-only, optimized)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+
+# PyTorch CPU-only version (much smaller than CUDA version)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.0+cpu
+torchvision==0.19.0+cpu
+
+# ML libraries
+ultralytics==8.2.0
+Pillow==10.4.0
+numpy==1.26.4
+
+# OpenCV (headless version, no GUI dependencies)
+opencv-python-headless==4.10.0.84
+
+# FastAPI dependencies
+pydantic==2.9.0
+python-dotenv==1.0.1
+
+# Database (optional, if you need MongoDB)
+motor==3.6.0
+
+# Hugging Face Hub (for model downloads)
+huggingface-hub==0.25.0

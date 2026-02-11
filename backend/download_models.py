@@ -1,63 +1,77 @@
 """
 Model downloader for deployment environments with size limits.
-Run this before the main app starts to fetch models from external storage.
+Downloads models from Hugging Face Hub on deployment.
 """
 import os
-import urllib.request
 from pathlib import Path
 
-def download_file(url: str, dest: Path):
-    """Download a file with progress reporting."""
-    if dest.exists():
-        print(f"✓ {dest.name} already exists, skipping download")
-        return
-    
-    print(f"Downloading {dest.name} from {url}...")
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    
-    def progress_hook(block_num, block_size, total_size):
-        downloaded = block_num * block_size
-        percent = min(downloaded / total_size * 100, 100) if total_size > 0 else 0
-        print(f"\r  Progress: {percent:.1f}%", end="", flush=True)
-    
+def download_from_huggingface():
+    """Download models from Hugging Face Hub."""
     try:
-        urllib.request.urlretrieve(url, dest, reporthook=progress_hook)
-        print(f"\n✓ Downloaded {dest.name} ({dest.stat().st_size / 1024 / 1024:.1f} MB)")
-    except Exception as e:
-        print(f"\n✗ Failed to download {dest.name}: {e}")
+        from huggingface_hub import hf_hub_download
+    except ImportError:
+        print("❌ huggingface-hub not installed. Install with: pip install huggingface-hub")
+        return False
+    
+    MODEL_DIR = Path("model")
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Configuration - set via environment variable or use default
+    REPO_ID = os.getenv("HF_MODEL_REPO", "Shaurya-aswal/military-surveillance-models")
+    
+    models = [
+        "vit_classifier.pth",
+        "yolov8n m.pt"
+    ]
+    
+    print("=" * 60)
+    print("📥 Downloading models from Hugging Face Hub")
+    print(f"📦 Repository: {REPO_ID}")
+    print("=" * 60)
+    
+    success = True
+    for model_name in models:
+        dest = MODEL_DIR / model_name
+        
         if dest.exists():
-            dest.unlink()
-        raise
+            size_mb = dest.stat().st_size / 1024 / 1024
+            print(f"✅ {model_name} already exists ({size_mb:.1f} MB)")
+            continue
+        
+        print(f"\n📥 Downloading {model_name}...")
+        try:
+            downloaded_path = hf_hub_download(
+                repo_id=REPO_ID,
+                filename=model_name,
+                local_dir=str(MODEL_DIR),
+                local_dir_use_symlinks=False
+            )
+            size_mb = Path(downloaded_path).stat().st_size / 1024 / 1024
+            print(f"✅ Downloaded {model_name} ({size_mb:.1f} MB)")
+        except Exception as e:
+            print(f"❌ Failed to download {model_name}: {e}")
+            print(f"   Make sure the repository exists: https://huggingface.co/{REPO_ID}")
+            success = False
+    
+    print("\n" + "=" * 60)
+    if success:
+        print("✅ All models downloaded successfully!")
+    else:
+        print("⚠️  Some models failed to download")
+    print("=" * 60)
+    
+    return success
 
 def main():
     """Download all required model files."""
-    MODEL_DIR = Path("model")
+    # Try Hugging Face first (recommended)
+    if download_from_huggingface():
+        return
     
-    # Configure your model hosting URLs here
-    # Example: Hugging Face, AWS S3, Google Cloud Storage, etc.
-    MODELS = {
-        "yolov8n_m.pt": os.getenv(
-            "YOLO_WEIGHTS_URL",
-            "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt"  # Public fallback
-        ),
-        "vit_classifier.pth": os.getenv(
-            "VIT_WEIGHTS_URL",
-            ""  # You must set this via environment variable
-        ),
-    }
-    
-    for filename, url in MODELS.items():
-        if not url:
-            print(f"⚠ Warning: No URL configured for {filename}")
-            print(f"   Set {filename.upper().replace('.', '_').replace(' ', '_')}_URL environment variable")
-            continue
-        
-        dest = MODEL_DIR / filename
-        try:
-            download_file(url, dest)
-        except Exception as e:
-            print(f"Error downloading {filename}: {e}")
-            # Continue anyway - the app will catch missing models
+    # Fallback: Direct URLs (if you host elsewhere)
+    print("\n💡 Alternative: Set up direct download URLs")
+    print("   Set HF_MODEL_REPO environment variable to your Hugging Face repo")
+    print("   Example: export HF_MODEL_REPO='your-username/your-model-repo'")
 
 if __name__ == "__main__":
     main()
