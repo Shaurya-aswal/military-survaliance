@@ -6,3 +6,6 @@ nixpacksConfigPath = "nixpacks.toml"
 startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+
+[source]
+fetchLFS = true
