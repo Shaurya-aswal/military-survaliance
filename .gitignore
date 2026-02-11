@@ -16,9 +16,9 @@ venv/
 .venv/
 *.egg-info/
 
-# Model weights (too large for git)
-model/*.pt
-model/*.pth
+# Model weights - Now tracked by Git LFS
+# model/*.pt
+# model/*.pth
 
 # Environment files
 .env
