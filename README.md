@@ -334,7 +334,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues and questions:
 - Open an [issue](https://github.com/Shaurya-aswal/military-survaliance/issues)
-- Email: lollitoonland@gmail.com
+- Email: shaurya.aswal12@gmail.com
 
 ---
 
